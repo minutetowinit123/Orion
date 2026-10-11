@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Orion, the Hunter</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060914;--ink:#e9edf8;--dim:#98a2c0;--rigel:#9cc8ff;--bet:#ff7a4d;--neb:#c77ae0;--line:#2a3560;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 Figtree,system-ui,sans-serif;min-height:100vh}
+#bg{position:fixed;inset:0;z-index:-1;width:100%;height:100%}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;font-weight:300;line-height:1.1;margin:0}
+h1{font-size:clamp(3rem,10vw,6.5rem);letter-spacing:-.02em}
+h2{font-size:clamp(1.8rem,5vw,2.8rem);margin-bottom:.6rem}
+h3{font-size:1.5rem;font-weight:600}
+p{max-width:62ch;margin:.5rem 0}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:center;padding:56px 0 24px}
+@media(max-width:780px){.hero{grid-template-columns:1fr}}
+.lede{color:var(--dim);font-size:1.15rem}
+svg.map{width:100%;max-height:78vh;overflow:visible}
+.edge{stroke:var(--line);stroke-width:1.5;fill:none}
+.st{cursor:pointer;outline:none}
+.st circle.core{transition:r .2s}
+.st:hover circle.core,.st:focus circle.core,.st.on circle.core{stroke:#fff;stroke-width:2}
+.st text{fill:var(--dim);font:12px Figtree,sans-serif;pointer-events:none}
+.panel{border-left:3px solid var(--bet);padding:6px 0 6px 18px;margin-top:22px;min-height:150px}
+.panel .meta{color:var(--dim);font-size:.95rem}
+section{padding:40px 0;border-top:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:28px;margin-top:18px}
+.grid p{color:var(--dim)}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:480px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+th{color:var(--dim);font-weight:600}
+footer{padding:40px 0 60px;color:var(--dim);font-size:.9rem}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,40px);background:var(--neb);color:#12051a;padding:10px 18px;border-radius:30px;font-weight:600;opacity:0;transition:.4s;z-index:9}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+button{font:inherit;cursor:pointer}
+.btn{background:none;color:var(--ink);border:1px solid var(--rigel);border-radius:8px;padding:8px 16px}
+.btn:hover,.btn:focus-visible{background:var(--rigel);color:#06101f}
+:focus-visible{outline:2px solid var(--rigel);outline-offset:3px}
+[hidden]{display:none!important}
+.top{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding-top:18px}
+.nav{display:flex;gap:6px;flex-wrap:wrap}
+.nav button{background:none;border:0;border-bottom:2px solid transparent;color:var(--dim);padding:6px 10px}
+.nav button.cur,.nav button:hover{color:var(--ink);border-color:var(--rigel)}
+.srch{position:relative}
+#q{background:#0d1330;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:8px 12px;font:inherit;width:220px;max-width:100%}
+#res{position:absolute;right:0;top:100%;margin-top:4px;background:#0d1330;border:1px solid var(--line);border-radius:8px;z-index:5;min-width:100%;display:flex;flex-direction:column}
+#res:empty{display:none}
+#res button,#res span{background:none;border:0;color:var(--ink);text-align:left;padding:8px 12px;white-space:nowrap}
+#res button:hover{background:var(--line)}
+.posters{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:18px;margin:24px 0 60px}
+.poster{aspect-ratio:2/3;border-radius:6px;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;font:600 1.5rem/1.15 Fraunces,Georgia,serif;border:1px solid var(--line);background:linear-gradient(165deg,var(--c1),#0a1030);box-shadow:inset 0 0 0 7px rgba(255,255,255,.06)}
+.pads{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.btn.on{background:var(--rigel);color:#06101f}
+.poster{color:var(--ink);cursor:pointer}
+.poster:hover,.poster:focus-visible{border-color:var(--rigel)}
+#bc{width:100%;max-width:560px;aspect-ratio:3/2;background:#0a1030;border:1px solid var(--line);border-radius:10px;touch-action:none;display:block;margin-bottom:60px}
+#lodge{background:radial-gradient(900px 260px at 50% 0,rgba(70,120,45,.3),transparent 70%) no-repeat}
+.tools{display:flex;gap:14px;margin:26px 0 28px;flex-wrap:wrap}
+.lsearch{flex:1 1 280px;display:flex;align-items:center;gap:10px;background:#14181f;border-radius:30px;padding:0 20px}
+.lsearch input{flex:1;background:none;border:0;color:var(--ink);font:inherit;padding:16px 0;outline:none}
+.sort{display:flex;align-items:center;gap:10px;background:#14181f;border-radius:30px;padding:0 20px;font-weight:600}
+.sort select{background:none;border:0;color:var(--ink);font:inherit;padding:16px 4px}
+.sort select option{background:#14181f}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:22px;margin-bottom:60px}
+.card .art{position:relative;aspect-ratio:3/4;border-radius:22px;border:3px solid #000;cursor:pointer;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;padding:14px;text-align:center;background:radial-gradient(circle at 25% 20%,#fff8 0 1.5px,transparent 2px),radial-gradient(circle at 70% 35%,#fff8 0 1.5px,transparent 2px),radial-gradient(circle at 45% 12%,#fff6 0 1px,transparent 2px),linear-gradient(170deg,var(--b),var(--a) 75%)}
+.card.sel .art{border-color:#4f8f33}
+.art b{font:600 1.35rem/1.1 Fraunces,Georgia,serif;text-shadow:0 2px 8px #000a;margin-bottom:28px}
+.ribbon{position:absolute;left:0;right:0;bottom:0;background:#000a;font-weight:600;font-size:.78rem;padding:6px 0}
+.lab{display:flex;align-items:center;justify-content:space-between;margin-top:10px;font-weight:600;font-size:1.1rem}
+.play{width:44px;height:44px;border-radius:50%;border:0;background:#4f8f33;color:#fff;font-size:1rem}
+.play:hover,.play:focus-visible{background:#63ad41}
+#lodge{display:none}
+body.secret #sky{display:none}body.secret #lodge{display:block}
+.games{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:36px;margin-top:20px}
+canvas#cv{width:100%;max-width:480px;aspect-ratio:3/2;background:#0a1030;border:1px solid var(--line);border-radius:10px;touch-action:none;display:block}
+.pads{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.pad{width:52px;height:52px;border-radius:50%;border:2px solid var(--c);background:transparent;color:var(--ink);opacity:.55;transition:.12s}
+.pad.lit{background:var(--c);opacity:1;box-shadow:0 0 22px var(--c);color:#000}
+.score{color:var(--rigel);font-weight:600}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas>
+
+<header class="wrap top"><nav class="nav" id="nav" aria-label="Pages"></nav><div class="srch"><input id="q" type="search" placeholder="Search Orion" aria-label="Search" autocomplete="off"><div id="res"></div></div></header>
+<div id="sky">
+<div class="wrap">
+<div class="hero" data-p="home">
+<div>
+<h1>Orion</h1>
+<p class="lede">The Hunter stands on the southern sky every northern winter. Seven bright stars make him easy to find, and you can spot him from a city. Tap or click any star to meet it.</p>
+<div class="panel" id="panel" aria-live="polite"></div>
+<p class="lede" style="font-size:.95rem">Hidden room: tap the three belt stars from left to right (Alnitak, Alnilam, Mintaka), or type "hunter".</p>
+</div>
+<svg class="map" viewBox="0 0 400 480" role="img" aria-label="Star map of Orion"><g id="map"></g></svg>
+</div>
+
+<section data-p="guide">
+<h2>How to find him</h2>
+<div class="grid">
+<div><h3>Look south</h3><p>From December to February, face south after dark. Orion rises in the east in the evening and climbs high by midnight.</p></div>
+<div><h3>Start with the belt</h3><p>Three stars in a short, tilted row are the quickest way in. Nothing else in the sky looks quite like them.</p></div>
+<div><h3>Follow the lines</h3><p>The belt points down-left toward Sirius, the brightest star in the night sky, and up-right toward the red giant Aldebaran in Taurus.</p></div>
+</div>
+</section>
+
+<section data-p="stars">
+<h2>The seven stars</h2>
+<div class="tbl"><table>
+<thead><tr><th>Star</th><th>Role</th><th>Color</th><th>Distance</th></tr></thead>
+<tbody id="rows"></tbody>
+</table></div>
+</section>
+
+<section data-p="stars">
+<h2>The sword and the nebula</h2>
+<p>Below the belt hangs Orion's sword. Its middle "star" is blurry because it is the Orion Nebula (M42), a cloud of gas about 1,300 light-years away where new stars are being born right now. It is visible to the naked eye in dark skies, and a pair of binoculars shows it glowing.</p>
+</section>
+
+<section data-p="myth">
+<h2>The myth</h2>
+<p>In Greek stories Orion was a giant hunter, so skilled he boasted he could kill any animal on Earth. In one telling, the Earth sent a scorpion to stop him. Zeus placed both in the sky on opposite sides, so when Scorpius rises, Orion sets.</p>
+</section>
+
+<section data-p="guide">
+<h2>Orion's meteors</h2>
+<p>The Orionids are dust from Halley's Comet. They run through October and peak around October 21, with a handful of fast, faint streaks per hour radiating from near Orion's club. Look after midnight, away from city lights.</p>
+</section>
+
+<footer>
+Distances are approximate and sources vary. The belt keeps an order, if you know how to read it.
+</footer>
+</div>
+</div>
+
+<div id="lodge">
+<div class="wrap">
+<div style="padding:48px 0 12px">
+<h1 style="font-size:clamp(2.4rem,8vw,4.5rem)">The Hunter's Lodge</h1>
+<p class="lede">You found the hidden room. New games are on the way.</p>
+<button class="btn" id="back">Back to the sky</button>
+</div>
+<div class="tools"><div class="lsearch"><span aria-hidden="true">&#128269;</span><input id="lq" type="search" placeholder="Search games..." aria-label="Search games" autocomplete="off"></div><label class="sort">&#8645; <select id="ls" aria-label="Sort games"><option value="pop">Popular</option><option value="az">A to Z</option></select></label></div>
+<div class="cards" id="cards"></div>
+</div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const S=[
+ {id:'bet',n:'Betelgeuse',x:135,y:105,r:11,c:'#ff7a4d',role:'Right shoulder',col:'Orange-red',d:'about 550–700 ly',t:'A red supergiant so large that, placed at the Sun, it would swallow Mars. It pulses and will end as a supernova someday, but not necessarily soon.'},
+ {id:'bel',n:'Bellatrix',x:265,y:100,r:7,c:'#bcd4ff',role:'Left shoulder',col:'Blue-white',d:'about 250 ly',t:'The Amazon Star. One of the closest of Orion\'s bright stars, and hot enough to be blue.'},
+ {id:'mei',n:'Meissa',x:200,y:50,r:5,c:'#cfe0ff',role:'Head',col:'Blue-white',d:'about 1,000 ly',t:'A faint pair at the hunter\'s head. Its name comes from an Arabic word meaning "the shining one".'},
+ {id:'aln',n:'Alnitak',x:168,y:245,r:7,c:'#9cc8ff',role:'Belt, left',col:'Blue',d:'about 1,260 ly',t:'The belt star nearest the Flame Nebula and the dark Horsehead Nebula.'},
+ {id:'ail',n:'Alnilam',x:202,y:235,r:8,c:'#a9ceff',role:'Belt, middle',col:'Blue',d:'about 2,000 ly',t:'The middle belt star and the most luminous of the three. It is much farther away than it looks.'},
+ {id:'min',n:'Mintaka',x:236,y:225,r:6,c:'#b3d2ff',role:'Belt, right',col:'Blue-white',d:'about 1,200 ly',t:'Sits almost exactly on the celestial equator, so it is visible from nearly everywhere on Earth.'},
+ {id:'sai',n:'Saiph',x:150,y:385,r:6,c:'#aac9ff',role:'Left knee',col:'Blue-white',d:'about 650 ly',t:'A hot supergiant. It is bright, but much of its light is ultraviolet, which our eyes can\'t see.'},
+ {id:'rig',n:'Rigel',x:268,y:395,r:10,c:'#9cc8ff',role:'Right foot',col:'Blue-white',d:'about 860 ly',t:'A blue supergiant tens of thousands of times brighter than the Sun, and usually the 7th brightest star in the sky.'}
+];
+const E=[['mei','bet'],['mei','bel'],['bet','aln'],['bel','min'],['aln','ail'],['ail','min'],['aln','sai'],['min','rig']];
+const by=Object.fromEntries(S.map(s=>[s.id,s]));
+const NS='http://www.w3.org/2000/svg',map=$('#map');
+const mk=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);(p||map).appendChild(e);return e};
+E.forEach(([a,b])=>mk('line',{class:'edge',x1:by[a].x,y1:by[a].y,x2:by[b].x,y2:by[b].y}));
+// sword + nebula
+mk('line',{class:'edge',x1:202,y1:262,x2:202,y2:318});
+mk('ellipse',{cx:202,cy:292,rx:18,ry:30,fill:'#c77ae0',opacity:.28});
+mk('circle',{cx:202,cy:292,r:4,fill:'#f2c7ff'});
+S.forEach(s=>{
+ const g=mk('g',{class:'st',tabindex:0,role:'button','aria-label':s.n,id:'s-'+s.id});
+ mk('circle',{cx:s.x,cy:s.y,r:s.r*2.4,fill:s.c,opacity:.16},g);
+ mk('circle',{class:'core',cx:s.x,cy:s.y,r:s.r,fill:s.c},g);
+ const t=mk('text',{x:s.x+s.r+8,y:s.y+4},g);t.textContent=s.n;
+ g.onclick=()=>pick(s);
+ g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(s)}};
+});
+const rows=$('#rows');
+S.forEach(s=>{const r=document.createElement('tr');r.innerHTML=`<td>${s.n}</td><td>${s.role}</td><td>${s.col}</td><td>${s.d}</td>`;rows.appendChild(r)});
+function pick(s){
+ document.querySelectorAll('.st').forEach(e=>e.classList.remove('on'));
+ $('#s-'+s.id).classList.add('on');
+ $('#panel').style.borderColor=s.c;
+ $('#panel').innerHTML=`<h3>${s.n}</h3><div class="meta">${s.role} · ${s.col} · ${s.d}</div><p>${s.t}</p>`;
+ belt(s.id);
+}
+// secret: click the belt left to right (Alnitak, Alnilam, Mintaka), or type "hunter"
+let seq=[],typed='';
+pick(by.bet);
+function belt(id){
+ const order=['aln','ail','min'];
+ if(!order.includes(id)){seq=[];return}
+ seq=(id===order[seq.length])?seq.concat(id):(id===order[0]?[id]:[]);
+ if(seq.length===3){seq=[];unlock()}
+}
+addEventListener('keydown',e=>{
+ if(e.key.length!==1)return;
+ typed=(typed+e.key.toLowerCase()).slice(-6);
+ if(typed==='hunter'){typed='';unlock()}
+});
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
+function unlock(){
+ toast('The belt aligns. A door opens.');
+ setTimeout(()=>go('lodge'),900);
+}
+$('#back').onclick=()=>go('home');
+
+// background stars
+(function(){
+ const c=$('#bg'),x=c.getContext('2d');
+ function draw(){
+  c.width=innerWidth;c.height=innerHeight;
+  for(let i=0;i<220;i++){
+   x.globalAlpha=.25+Math.random()*.7;x.fillStyle=Math.random()<.15?'#ffd9c2':'#dfe8ff';
+   x.beginPath();x.arc(Math.random()*c.width,Math.random()*c.height,Math.random()*1.2+.2,0,7);x.fill();
+  }
+ }
+ draw();addEventListener('resize',draw);
+})();
+
+// Pages + search
+const PAGES={home:'Home',guide:'Sky guide',stars:'The stars',myth:'The myth'};
+const KW={home:'map orion hunter belt',guide:'find look south winter orionids meteor shower halley october',stars:'table distance nebula m42 sword',myth:'greek zeus scorpion scorpius legend story'};
+function go(p){
+ const lodge=p==='lodge';
+ document.body.classList.toggle('secret',lodge);
+ if(!lodge){
+  document.querySelectorAll('[data-p]').forEach(e=>e.hidden=e.dataset.p!==p);
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('cur',b.dataset.go===p));
+ }
+ scrollTo(0,0);
+}
+Object.keys(PAGES).forEach(k=>{const b=document.createElement('button');b.textContent=PAGES[k];b.dataset.go=k;b.onclick=()=>go(k);$('#nav').appendChild(b)});
+const q=$('#q'),res=$('#res');
+const idx=[...Object.keys(PAGES).map(k=>({l:PAGES[k]+' (page)',k:PAGES[k]+' '+KW[k],f:()=>go(k)})),...S.map(s=>({l:s.n+' (star)',k:s.n+' '+s.role+' '+s.col,f:()=>{go('home');pick(s)}}))];
+function clearQ(){q.value='';res.innerHTML=''}
+q.oninput=()=>{
+ const v=q.value.trim().toLowerCase();res.innerHTML='';
+ if(v==='shensucks'){clearQ();toast('Password accepted.');go('lodge');return}
+ if(!v)return;
+ idx.filter(i=>i.k.toLowerCase().includes(v)).slice(0,6).forEach(i=>{const b=document.createElement('button');b.textContent=i.l;b.onclick=()=>{clearQ();i.f()};res.appendChild(b)});
+ if(!res.children.length)res.innerHTML='<span>No matches</span>';
+};
+q.onkeydown=e=>{const f=res.firstElementChild;if(e.key==='Enter'&&f&&f.tagName==='BUTTON')f.click()};
+// Lodge launcher
+// Each card: [title, color 1, color 2, link to the game's own html file, cover image file]. An empty link means Coming Soon; an empty image keeps the gradient.
+const G=[['Minecraft','#123a6b','#4aa3ff','something.html','something.jpg'],['Coming Soon','#4a1a3a','#ff7a4d','',''],['Coming Soon','#3a1f5e','#c77ae0','',''],['Coming Soon','#0f4a4a','#58d6b0','',''],['Coming Soon','#5e2a1a','#ffb25a','',''],['Coming Soon','#26306b','#9cc8ff','','']];
+const grid=$('#cards');
+function cards(list){
+ grid.innerHTML='';
+ list.forEach(([n,a,b,u,im])=>{
+  const c=document.createElement('div');c.className='card';
+  c.innerHTML=`<div class="art" style="--a:${a};--b:${b}${im?`;background:url('${im}') center/cover`:''}">${im?'':`<b>${n}</b>`}</div><div class="lab"><span>${n}</span><button class="play" aria-label="Play ${n}">&#9654;</button></div>`;
+  c.querySelector('.art').onclick=()=>{grid.querySelectorAll('.card').forEach(x=>x.classList.remove('sel'));c.classList.add('sel')};
+  c.querySelector('.play').onclick=()=>u?window.open(u,'_blank','noopener'):toast('Coming soon!');
+  grid.appendChild(c);
+ });
+ if(!list.length)grid.innerHTML='<p>No games match.</p>';
+}
+function filt(){
+ const v=$('#lq').value.trim().toLowerCase();
+ let l=G.filter(g=>g[0].toLowerCase().includes(v));
+ if($('#ls').value==='az')l=l.slice().sort((x,y)=>x[0].localeCompare(y[0]));
+ cards(l);
+}
+$('#lq').oninput=filt;$('#ls').onchange=filt;filt();
+go('home');
+</script>
+</body>
+</html>
